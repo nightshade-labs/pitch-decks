@@ -1,711 +1,1075 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mato - The Execution Layer for Internet Capital Markets</title>
 
     <!-- Fonts: Clash Display for headlines, Satoshi for body -->
-    <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=clash-display@600,700&f[]=satoshi@400,500,700&display=swap">
+    <link
+      rel="stylesheet"
+      href="https://api.fontshare.com/v2/css?f[]=clash-display@600,700&f[]=satoshi@400,500,700&display=swap"
+    />
 
     <style>
-        /* ===========================================
+      /* ===========================================
            CSS CUSTOM PROPERTIES — MATO BRAND
            Extracted from mato-mobile design system
            =========================================== */
-        :root {
-            /* === MATO COLORS === */
-            --bg-primary: #060B16;
-            --bg-secondary: #0F182D;
-            --bg-surface: #131F39;
-            --bg-panel: #0C1427;
+      :root {
+        /* === MATO COLORS === */
+        --bg-primary: #060b16;
+        --bg-secondary: #0f182d;
+        --bg-surface: #131f39;
+        --bg-panel: #0c1427;
 
-            --text-primary: #F3F7FF;
-            --text-secondary: #D3DCF2;
-            --text-muted: #A0AECC;
-            --text-subtle: #7B8CB2;
+        --text-primary: #f3f7ff;
+        --text-secondary: #d3dcf2;
+        --text-muted: #a0aecc;
+        --text-subtle: #7b8cb2;
 
-            --accent: #4E8DFF;
-            --accent-glow: rgba(78, 141, 255, 0.4);
-            --accent-soft: #1E335F;
+        --accent: #4e8dff;
+        --accent-glow: rgba(78, 141, 255, 0.4);
+        --accent-soft: #1e335f;
 
-            --buy: #2CCB73;
-            --buy-glow: rgba(44, 203, 115, 0.3);
-            --sell: #F25565;
-            --sell-glow: rgba(242, 85, 101, 0.3);
+        --buy: #2ccb73;
+        --buy-glow: rgba(44, 203, 115, 0.3);
+        --sell: #f25565;
+        --sell-glow: rgba(242, 85, 101, 0.3);
 
-            --border: #273A5F;
-            --divider: #1B2C4B;
+        --border: #273a5f;
+        --divider: #1b2c4b;
 
-            /* === TYPOGRAPHY === */
-            --font-display: 'Clash Display', sans-serif;
-            --font-body: 'Satoshi', sans-serif;
+        /* === TYPOGRAPHY === */
+        --font-display: "Clash Display", sans-serif;
+        --font-body: "Satoshi", sans-serif;
 
-            --title-size: clamp(2rem, 6vw, 4.5rem);
-            --h2-size: clamp(1.5rem, 4vw, 3rem);
-            --h3-size: clamp(1.1rem, 2.5vw, 1.75rem);
-            --body-size: clamp(0.85rem, 1.5vw, 1.25rem);
-            --small-size: clamp(0.7rem, 1vw, 0.95rem);
-            --stat-size: clamp(2rem, 5vw, 4rem);
+        --title-size: clamp(2rem, 6vw, 4.5rem);
+        --h2-size: clamp(1.5rem, 4vw, 3rem);
+        --h3-size: clamp(1.1rem, 2.5vw, 1.75rem);
+        --body-size: clamp(0.85rem, 1.5vw, 1.25rem);
+        --small-size: clamp(0.7rem, 1vw, 0.95rem);
+        --stat-size: clamp(2rem, 5vw, 4rem);
 
-            /* === SPACING === */
-            --slide-padding: clamp(1.5rem, 5vw, 5rem);
-            --content-gap: clamp(1rem, 2.5vw, 2.5rem);
-            --element-gap: clamp(0.5rem, 1.5vw, 1.5rem);
+        /* === SPACING === */
+        --slide-padding: clamp(1.5rem, 5vw, 5rem);
+        --content-gap: clamp(1rem, 2.5vw, 2.5rem);
+        --element-gap: clamp(0.5rem, 1.5vw, 1.5rem);
 
-            /* === ANIMATION === */
-            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
-            --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-            --duration-normal: 0.7s;
-            --duration-slow: 1s;
-        }
+        /* === ANIMATION === */
+        --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+        --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+        --duration-normal: 0.7s;
+        --duration-slow: 1s;
+      }
 
-        /* ===========================================
+      /* ===========================================
            BASE RESET & VIEWPORT FITTING
            =========================================== */
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-        html, body {
-            height: 100%;
-            overflow-x: hidden;
-            background: var(--bg-primary);
-            color: var(--text-primary);
-            font-family: var(--font-body);
-        }
+      html,
+      body {
+        height: 100%;
+        overflow-x: hidden;
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        font-family: var(--font-body);
+      }
 
-        html {
-            scroll-snap-type: y mandatory;
-            scroll-behavior: smooth;
-        }
+      html {
+        scroll-snap-type: y mandatory;
+        scroll-behavior: smooth;
+      }
 
-        /* === SLIDE BASE === */
-        .slide {
-            width: 100vw;
-            height: 100vh;
-            height: 100dvh;
-            overflow: hidden;
-            scroll-snap-align: start;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            background: var(--bg-primary);
-        }
+      /* === SLIDE BASE === */
+      .slide {
+        width: 100vw;
+        height: 100vh;
+        height: 100dvh;
+        overflow: hidden;
+        scroll-snap-align: start;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        background: var(--bg-primary);
+      }
 
-        .slide-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            max-height: 100%;
-            overflow: hidden;
-            padding: var(--slide-padding);
-            position: relative;
-            z-index: 2;
-        }
+      .slide-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        max-height: 100%;
+        overflow: hidden;
+        padding: var(--slide-padding);
+        position: relative;
+        z-index: 2;
+      }
 
-        /* ===========================================
+      #slide-hook .slide-content {
+        align-items: flex-start;
+        text-align: left;
+      }
+
+      #slide-problem .slide-content {
+        align-items: flex-start;
+        text-align: left;
+      }
+
+      /* ===========================================
            TYPOGRAPHY
            =========================================== */
-        h1 {
-            font-family: var(--font-display);
-            font-size: var(--title-size);
-            font-weight: 700;
-            line-height: 1.1;
-            letter-spacing: -0.02em;
-        }
+      h1 {
+        font-family: var(--font-display);
+        font-size: var(--title-size);
+        font-weight: 700;
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+      }
 
-        h2 {
-            font-family: var(--font-display);
-            font-size: var(--h2-size);
-            font-weight: 600;
-            line-height: 1.2;
-            letter-spacing: -0.01em;
-            margin-bottom: var(--content-gap);
-        }
+      h2 {
+        font-family: var(--font-display);
+        font-size: var(--h2-size);
+        font-weight: 600;
+        line-height: 1.2;
+        letter-spacing: -0.01em;
+        margin-bottom: var(--content-gap);
+      }
 
-        h3 {
-            font-family: var(--font-display);
-            font-size: var(--h3-size);
-            font-weight: 600;
-            line-height: 1.3;
-        }
+      h3 {
+        font-family: var(--font-display);
+        font-size: var(--h3-size);
+        font-weight: 600;
+        line-height: 1.3;
+      }
 
-        p, li {
-            font-size: var(--body-size);
-            line-height: 1.6;
-            color: var(--text-secondary);
-        }
+      p,
+      li {
+        font-size: var(--body-size);
+        line-height: 1.6;
+        color: var(--text-secondary);
+      }
 
-        .overline {
-            font-size: var(--small-size);
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.15em;
-            color: var(--accent);
-            margin-bottom: var(--element-gap);
-        }
+      .overline {
+        font-size: var(--small-size);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        color: var(--accent);
+        margin-bottom: var(--element-gap);
+      }
 
-        .subtitle {
-            font-size: clamp(1rem, 2vw, 1.5rem);
-            color: var(--text-secondary);
-            max-width: 700px;
-        }
+      .subtitle {
+        font-size: clamp(1rem, 2vw, 1.5rem);
+        color: var(--text-secondary);
+        max-width: 700px;
+      }
 
-        /* === ACCENT TEXT === */
-        .text-accent { color: var(--accent); }
-        .text-buy { color: var(--buy); }
-        .text-sell { color: var(--sell); }
+      /* === ACCENT TEXT === */
+      .text-accent {
+        color: var(--accent);
+      }
+      .text-buy {
+        color: var(--buy);
+      }
+      .text-sell {
+        color: var(--sell);
+      }
 
-        /* ===========================================
+      /* ===========================================
            BACKGROUNDS & VISUAL EFFECTS
            =========================================== */
-        /* Gradient mesh for depth */
-        .bg-gradient-mesh {
-            background:
-                radial-gradient(ellipse at 30% 20%, rgba(78, 141, 255, 0.15) 0%, transparent 50%),
-                radial-gradient(ellipse at 70% 80%, rgba(44, 203, 115, 0.08) 0%, transparent 40%),
-                radial-gradient(ellipse at 90% 10%, rgba(242, 85, 101, 0.06) 0%, transparent 30%),
-                var(--bg-primary);
-        }
+      /* Gradient mesh for depth */
+      .bg-gradient-mesh {
+        background:
+          radial-gradient(
+            ellipse at 30% 20%,
+            rgba(78, 141, 255, 0.15) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            ellipse at 70% 80%,
+            rgba(44, 203, 115, 0.08) 0%,
+            transparent 40%
+          ),
+          radial-gradient(
+            ellipse at 90% 10%,
+            rgba(242, 85, 101, 0.06) 0%,
+            transparent 30%
+          ),
+          var(--bg-primary);
+      }
 
-        /* Grid pattern overlay */
-        .bg-grid::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background-image:
-                linear-gradient(rgba(78, 141, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(78, 141, 255, 0.03) 1px, transparent 1px);
-            background-size: 60px 60px;
-            pointer-events: none;
-            z-index: 1;
-        }
+      /* Grid pattern overlay */
+      .bg-grid::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(78, 141, 255, 0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(78, 141, 255, 0.03) 1px, transparent 1px);
+        background-size: 60px 60px;
+        pointer-events: none;
+        z-index: 1;
+      }
 
-        /* Glowing orb effect */
-        .glow-orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.6;
-            pointer-events: none;
-            z-index: 0;
-        }
+      /* Glowing orb effect */
+      .glow-orb {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(80px);
+        opacity: 0.6;
+        pointer-events: none;
+        z-index: 0;
+      }
 
-        .glow-orb.blue {
-            background: var(--accent);
-            width: 400px;
-            height: 400px;
-        }
+      .glow-orb.blue {
+        background: var(--accent);
+        width: 400px;
+        height: 400px;
+      }
 
-        .glow-orb.green {
-            background: var(--buy);
-            width: 300px;
-            height: 300px;
-        }
+      .glow-orb.green {
+        background: var(--buy);
+        width: 300px;
+        height: 300px;
+      }
 
-        .glow-orb.red {
-            background: var(--sell);
-            width: 250px;
-            height: 250px;
-        }
+      .glow-orb.red {
+        background: var(--sell);
+        width: 250px;
+        height: 250px;
+      }
 
-        /* ===========================================
+      /* ===========================================
            CARD COMPONENTS
            =========================================== */
-        .card {
-            background: var(--bg-surface);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: clamp(1rem, 2vw, 2rem);
-        }
+      .card {
+        background: var(--bg-surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: clamp(1rem, 2vw, 2rem);
+        text-align: left;
+      }
 
-        .card-glow {
-            box-shadow: 0 0 40px var(--accent-glow);
-        }
+      .card-glow {
+        box-shadow: 0 0 40px var(--accent-glow);
+      }
 
-        /* Stats card */
-        .stat-card {
-            text-align: center;
-            padding: clamp(1.5rem, 3vw, 2.5rem);
-        }
+      /* Stats card */
+      .stat-card {
+        text-align: center;
+        padding: clamp(1.5rem, 3vw, 2.5rem);
+      }
 
-        .stat-number {
-            font-family: var(--font-display);
-            font-size: var(--stat-size);
-            font-weight: 700;
-            color: var(--text-primary);
-            line-height: 1;
-        }
+      .stat-number {
+        font-family: var(--font-display);
+        font-size: var(--stat-size);
+        font-weight: 700;
+        color: var(--text-primary);
+        line-height: 1;
+      }
 
-        .stat-label {
-            font-size: var(--small-size);
-            color: var(--text-muted);
-            margin-top: 0.5rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-        }
+      .stat-label {
+        font-size: var(--small-size);
+        color: var(--text-muted);
+        margin-top: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+      }
 
-        /* ===========================================
+      /* ===========================================
            BULLET LISTS
            =========================================== */
-        .bullet-list {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: clamp(0.75rem, 1.5vh, 1.25rem);
-        }
+      .bullet-list {
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: clamp(0.75rem, 1.5vh, 1.25rem);
+        text-align: left;
+        width: 100%;
+      }
 
-        .bullet-list li {
-            display: flex;
-            align-items: flex-start;
-            gap: 1rem;
-        }
+      .bullet-list li {
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+      }
 
-        .bullet-list li::before {
-            content: '';
-            width: 8px;
-            height: 8px;
-            background: var(--accent);
-            border-radius: 50%;
-            margin-top: 0.5em;
-            flex-shrink: 0;
-            box-shadow: 0 0 12px var(--accent-glow);
-        }
+      .bullet-list li::before {
+        content: "";
+        width: 8px;
+        height: 8px;
+        background: var(--accent);
+        border-radius: 50%;
+        margin-top: 0.5em;
+        flex-shrink: 0;
+        box-shadow: 0 0 12px var(--accent-glow);
+      }
 
-        /* ===========================================
+      /* ===========================================
            STEP INDICATORS
            =========================================== */
-        .steps {
-            display: flex;
-            flex-direction: column;
-            gap: clamp(1rem, 2vh, 2rem);
-        }
+      .steps {
+        display: flex;
+        flex-direction: column;
+        gap: clamp(1rem, 2vh, 2rem);
+        width: 100%;
+      }
 
-        .step {
-            display: flex;
-            align-items: flex-start;
-            gap: clamp(1rem, 2vw, 1.5rem);
-        }
+      .step {
+        display: flex;
+        align-items: flex-start;
+        gap: clamp(1rem, 2vw, 1.5rem);
+      }
 
-        .step-number {
-            width: clamp(2rem, 4vw, 3rem);
-            height: clamp(2rem, 4vw, 3rem);
-            background: var(--accent-soft);
-            border: 2px solid var(--accent);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: var(--font-display);
-            font-weight: 700;
-            font-size: clamp(0.9rem, 1.5vw, 1.25rem);
-            color: var(--accent);
-            flex-shrink: 0;
-            box-shadow: 0 0 20px var(--accent-glow);
-        }
+      .step-number {
+        width: clamp(2rem, 4vw, 3rem);
+        height: clamp(2rem, 4vw, 3rem);
+        background: var(--accent-soft);
+        border: 2px solid var(--accent);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: clamp(0.9rem, 1.5vw, 1.25rem);
+        color: var(--accent);
+        flex-shrink: 0;
+        box-shadow: 0 0 20px var(--accent-glow);
+      }
 
-        .step-content h3 {
-            margin-bottom: 0.25rem;
-        }
+      .step-content {
+        text-align: left;
+      }
 
-        .step-content p {
-            color: var(--text-muted);
-        }
+      .step-content h3 {
+        margin-bottom: 0.25rem;
+      }
 
-        /* ===========================================
+      .step-content p {
+        color: var(--text-muted);
+      }
+
+      /* ===========================================
            TIMELINE / ROADMAP
            =========================================== */
-        .timeline {
-            display: flex;
-            gap: clamp(1rem, 3vw, 2rem);
-            overflow-x: auto;
-            padding-bottom: 1rem;
-        }
+      .timeline {
+        display: flex;
+        gap: clamp(1rem, 3vw, 2rem);
+        overflow-x: auto;
+        padding-bottom: 1rem;
+        width: 100%;
+      }
 
-        .timeline-item {
-            flex: 1;
-            min-width: 200px;
-            background: var(--bg-surface);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: clamp(1rem, 2vw, 1.5rem);
-            position: relative;
-        }
+      .timeline-item {
+        flex: 1;
+        min-width: 200px;
+        background: var(--bg-surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: clamp(1rem, 2vw, 1.5rem);
+        position: relative;
+        text-align: left;
+      }
 
-        .timeline-item.current {
-            border-color: var(--accent);
-            box-shadow: 0 0 30px var(--accent-glow);
-        }
+      .timeline-item.current {
+        border-color: var(--accent);
+        box-shadow: 0 0 30px var(--accent-glow);
+      }
 
-        .timeline-date {
-            font-family: var(--font-display);
-            font-size: clamp(0.8rem, 1.2vw, 1rem);
-            font-weight: 700;
-            color: var(--accent);
-            margin-bottom: 0.75rem;
-        }
+      .timeline-date {
+        font-family: var(--font-display);
+        font-size: clamp(0.9rem, 1.5vw, 1.15rem);
+        font-weight: 700;
+        color: var(--accent);
+        margin-bottom: 0.75rem;
+      }
 
-        .timeline-item h3 {
-            font-size: clamp(0.95rem, 1.5vw, 1.1rem);
-            margin-bottom: 0.5rem;
-        }
+      .timeline-item h3 {
+        font-size: clamp(1rem, 1.8vw, 1.25rem);
+        margin-bottom: 0.5rem;
+      }
 
-        .timeline-item p {
-            font-size: var(--small-size);
-            color: var(--text-muted);
-        }
+      .timeline-item p {
+        font-size: var(--body-size);
+        color: var(--text-muted);
+      }
 
-        /* ===========================================
+      /* ===========================================
            TEAM SECTION
            =========================================== */
-        .team-highlight {
-            display: flex;
-            flex-direction: column;
-            gap: var(--element-gap);
-        }
+      .team-highlight {
+        display: flex;
+        flex-direction: column;
+        gap: var(--element-gap);
+      }
 
-        .credential {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: clamp(0.75rem, 1.5vw, 1rem);
-            background: var(--bg-surface);
-            border-radius: 12px;
-            border: 1px solid var(--border);
-        }
+      .credential {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: clamp(0.75rem, 1.5vw, 1rem);
+        background: var(--bg-surface);
+        border-radius: 12px;
+        border: 1px solid var(--border);
+      }
 
-        .credential-icon {
-            width: clamp(2rem, 4vw, 3rem);
-            height: clamp(2rem, 4vw, 3rem);
-            background: var(--accent-soft);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: clamp(1rem, 2vw, 1.5rem);
-            flex-shrink: 0;
-        }
+      .credential-icon {
+        width: clamp(2rem, 4vw, 3rem);
+        height: clamp(2rem, 4vw, 3rem);
+        background: var(--accent-soft);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: clamp(1rem, 2vw, 1.5rem);
+        flex-shrink: 0;
+      }
 
-        .credential-text {
-            font-size: var(--body-size);
-        }
+      .credential-text {
+        font-size: var(--body-size);
+      }
 
-        /* Team member cards */
-        .team-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
-            gap: clamp(1rem, 2vw, 1.5rem);
-            max-width: 700px;
-        }
+      /* Team member cards */
+      .team-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+        gap: clamp(1rem, 2vw, 1.5rem);
+        max-width: 700px;
+        width: 100%;
+      }
 
-        .team-member {
-            background: var(--bg-surface);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: clamp(1rem, 2vw, 1.5rem);
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
+      .team-member {
+        background: var(--bg-surface);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: clamp(1rem, 2vw, 1.5rem);
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        text-align: left;
+      }
 
-        .team-member-header {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
+      .team-member-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
 
-        .team-photo {
-            width: clamp(3rem, 6vw, 4rem);
-            height: clamp(3rem, 6vw, 4rem);
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid var(--accent);
-        }
+      .team-photo {
+        width: clamp(3rem, 6vw, 4rem);
+        height: clamp(3rem, 6vw, 4rem);
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--accent);
+      }
 
-        .team-name {
-            font-family: var(--font-display);
-            font-size: clamp(1rem, 1.5vw, 1.25rem);
-            font-weight: 600;
-            color: var(--text-primary);
-        }
+      .team-name {
+        font-family: var(--font-display);
+        font-size: clamp(1rem, 1.5vw, 1.25rem);
+        font-weight: 600;
+        color: var(--text-primary);
+      }
 
-        .team-credentials {
-            display: flex;
-            flex-direction: column;
-            gap: 0.4rem;
-        }
+      .team-credentials {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+      }
 
-        .team-credential {
-            font-size: var(--small-size);
-            color: var(--text-muted);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
+      .team-credential {
+        font-size: var(--small-size);
+        color: var(--text-muted);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
 
-        .team-credential .badge {
-            background: var(--accent-soft);
-            color: var(--accent);
-            padding: 0.15rem 0.5rem;
-            border-radius: 4px;
-            font-size: clamp(0.6rem, 0.9vw, 0.75rem);
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
+      .team-credential .badge {
+        background: var(--accent-soft);
+        color: var(--accent);
+        padding: 0.15rem 0.5rem;
+        border-radius: 4px;
+        font-size: clamp(0.6rem, 0.9vw, 0.75rem);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
 
-        /* ===========================================
+      /* ===========================================
            CTA SECTION
            =========================================== */
-        .cta-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            gap: var(--content-gap);
-        }
+      .cta-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: var(--content-gap);
+      }
 
-        .tagline {
-            font-family: var(--font-display);
-            font-size: clamp(1.25rem, 3vw, 2.25rem);
-            font-weight: 600;
-            color: var(--text-secondary);
-            max-width: 700px;
-        }
+      .tagline {
+        font-family: var(--font-display);
+        font-size: clamp(1.25rem, 3vw, 2.25rem);
+        font-weight: 600;
+        color: var(--text-secondary);
+        max-width: 700px;
+      }
 
-        .tagline strong {
-            color: var(--accent);
-            font-weight: 700;
-        }
+      .tagline strong {
+        color: var(--accent);
+        font-weight: 700;
+      }
 
-        .qr-placeholder {
-            width: clamp(120px, 20vw, 180px);
-            height: clamp(120px, 20vw, 180px);
-            background: white;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--bg-primary);
-            font-size: var(--small-size);
-            font-weight: 600;
-            text-align: center;
-            padding: 1rem;
-        }
+      .cta-instruction {
+        font-size: var(--body-size);
+        color: var(--text-muted);
+      }
 
-        .cta-instruction {
-            font-size: var(--body-size);
-            color: var(--text-muted);
-        }
-
-        /* ===========================================
+      /* ===========================================
            MATO LOGO
            =========================================== */
-        .mato-logo {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
+      .mato-logo {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
 
-        .mato-logo svg {
-            width: clamp(2rem, 4vw, 3rem);
-            height: auto;
-        }
+      .mato-logo svg,
+      .mato-logo img {
+        width: clamp(2.5rem, 5vw, 3.75rem);
+        height: auto;
+      }
 
-        .mato-logo span {
-            font-family: var(--font-display);
-            font-size: clamp(1.25rem, 2.5vw, 2rem);
-            font-weight: 700;
-            letter-spacing: -0.02em;
-        }
+      .mato-logo span {
+        font-family: var(--font-display);
+        font-size: clamp(1.25rem, 2.5vw, 2rem);
+        font-weight: 700;
+        letter-spacing: -0.02em;
+      }
 
-        /* ===========================================
+      .problem-logo-bg {
+        position: absolute;
+        right: clamp(3rem, 10vw, 7rem);
+        top: 52%;
+        transform: translateY(-50%);
+        opacity: 0.2;
+        max-height: min(50vh, 260px);
+        width: auto;
+        pointer-events: none;
+      }
+
+      .hero-logo-bg {
+        position: absolute;
+        right: clamp(4rem, 12vw, 8rem);
+        top: 52%;
+        transform: translateY(-50%);
+        opacity: 0.3;
+        max-height: min(60vh, 320px);
+        width: auto;
+        pointer-events: none;
+      }
+
+      /* ===========================================
+           TWEET IMAGE
+           =========================================== */
+      .tweet-image {
+        max-width: min(100%, 720px);
+        border-radius: 16px;
+        border: 1px solid var(--border);
+        box-shadow: 0 18px 45px rgba(0, 0, 0, 0.65);
+      }
+
+      /* ===========================================
+           COMPARISON TABLE
+           =========================================== */
+      .compare-table {
+        width: 100%;
+        max-width: 820px;
+        border-collapse: separate;
+        border-spacing: 0;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid var(--border);
+      }
+
+      .compare-table th,
+      .compare-table td {
+        padding: clamp(0.6rem, 1.2vw, 1rem) clamp(0.8rem, 1.5vw, 1.25rem);
+        text-align: center;
+        font-size: var(--body-size);
+        border-bottom: 1px solid var(--divider);
+      }
+
+      .compare-table thead th {
+        background: var(--bg-surface);
+        font-family: var(--font-display);
+        font-weight: 700;
+        font-size: clamp(0.9rem, 1.3vw, 1.1rem);
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      .compare-table thead th.col-mato {
+        color: var(--accent);
+        background: rgba(78, 141, 255, 0.08);
+      }
+
+      .compare-table tbody td {
+        background: var(--bg-panel);
+        color: var(--text-secondary);
+      }
+
+      .compare-table tbody td.col-mato {
+        background: rgba(78, 141, 255, 0.05);
+        color: var(--text-primary);
+        font-weight: 600;
+      }
+
+      .compare-table tbody tr:last-child td {
+        border-bottom: none;
+      }
+
+      .compare-table td:first-child {
+        text-align: left;
+        font-weight: 500;
+        color: var(--text-primary);
+      }
+
+      .compare-win {
+        color: var(--buy);
+        font-weight: 700;
+      }
+
+      .compare-lose {
+        color: var(--text-subtle);
+      }
+
+      /* ===========================================
            GRID LAYOUTS
            =========================================== */
-        .two-col {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
-            gap: clamp(1rem, 3vw, 2rem);
-        }
+      .two-col {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+        gap: clamp(1rem, 3vw, 2rem);
+        width: 100%;
+      }
 
-        .three-col {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
-            gap: clamp(1rem, 2vw, 1.5rem);
-        }
+      .three-col {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+        gap: clamp(1rem, 2vw, 1.5rem);
+        width: 100%;
+      }
 
-        /* ===========================================
+      /* ===========================================
+           ARCHITECTURE DIAGRAM
+           =========================================== */
+      .arch-flow {
+        display: flex;
+        align-items: stretch;
+        max-width: 850px;
+        width: 100%;
+      }
+
+      .arch-node {
+        flex: 1;
+        background: var(--bg-surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: clamp(0.75rem, 1.5vw, 1.25rem);
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: clamp(0.2rem, 0.5vh, 0.4rem);
+      }
+
+      .arch-node h3 {
+        font-size: var(--h3-size);
+      }
+
+      .arch-node p {
+        font-size: var(--small-size);
+        color: var(--text-muted);
+      }
+
+      .arch-center {
+        flex: 1.5;
+        border: 2px solid var(--accent);
+        box-shadow: 0 0 30px var(--accent-glow);
+      }
+
+      .arch-center-label {
+        font-family: var(--font-display);
+        font-size: var(--small-size);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--accent);
+      }
+
+      .arch-vaults {
+        display: flex;
+        gap: clamp(0.4rem, 0.75vw, 0.6rem);
+      }
+
+      .vault-badge {
+        flex: 1;
+        padding: clamp(0.35rem, 0.6vw, 0.5rem);
+        border-radius: 8px;
+        font-size: var(--small-size);
+        font-weight: 600;
+        text-align: center;
+      }
+
+      .vault-badge.sol {
+        background: rgba(242, 85, 101, 0.12);
+        border: 1px solid rgba(242, 85, 101, 0.25);
+        color: var(--sell);
+      }
+
+      .vault-badge.usdc {
+        background: rgba(44, 203, 115, 0.12);
+        border: 1px solid rgba(44, 203, 115, 0.25);
+        color: var(--buy);
+      }
+
+      .arch-connector {
+        flex: 0 0 clamp(20px, 3.5vw, 44px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+      }
+
+      .arch-connector::before {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 2px;
+        background: var(--accent);
+        opacity: 0.4;
+      }
+
+      .arch-connector::after {
+        content: "";
+        position: absolute;
+        width: 0;
+        height: 0;
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+      }
+
+      .arch-connector.to-right::after {
+        right: 0;
+        border-left: 7px solid var(--accent);
+      }
+
+      .arch-connector.to-left::after {
+        left: 0;
+        border-right: 7px solid var(--accent);
+      }
+
+      .formula-bar {
+        background: var(--bg-surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: clamp(0.4rem, 0.75vw, 0.6rem) clamp(1rem, 2vw, 1.5rem);
+        font-family: var(--font-display);
+        font-size: clamp(0.9rem, 1.5vw, 1.25rem);
+        font-weight: 600;
+        text-align: center;
+        color: var(--text-muted);
+        max-width: 500px;
+        letter-spacing: 0.02em;
+      }
+
+      .arch-props {
+        display: flex;
+        gap: clamp(0.4rem, 1vw, 0.75rem);
+        justify-content: center;
+        flex-wrap: wrap;
+        width: 100%;
+      }
+
+      .prop-pill {
+        padding: clamp(0.2rem, 0.4vw, 0.35rem) clamp(0.6rem, 1.2vw, 1rem);
+        background: var(--accent-soft);
+        border-radius: 20px;
+        font-size: var(--small-size);
+        color: var(--accent);
+        font-weight: 600;
+        letter-spacing: 0.02em;
+      }
+
+      /* ===========================================
            ANIMATIONS
            =========================================== */
-        .reveal {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity var(--duration-normal) var(--ease-out-expo),
-                        transform var(--duration-normal) var(--ease-out-expo);
+      .reveal {
+        opacity: 0;
+        transform: translateY(30px);
+        transition:
+          opacity var(--duration-normal) var(--ease-out-expo),
+          transform var(--duration-normal) var(--ease-out-expo);
+      }
+
+      .slide.visible .reveal {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* Stagger children */
+      .reveal:nth-child(1) {
+        transition-delay: 0.1s;
+      }
+      .reveal:nth-child(2) {
+        transition-delay: 0.2s;
+      }
+      .reveal:nth-child(3) {
+        transition-delay: 0.3s;
+      }
+      .reveal:nth-child(4) {
+        transition-delay: 0.4s;
+      }
+      .reveal:nth-child(5) {
+        transition-delay: 0.5s;
+      }
+      .reveal:nth-child(6) {
+        transition-delay: 0.6s;
+      }
+
+      /* Scale reveal for stats */
+      .reveal-scale {
+        opacity: 0;
+        transform: scale(0.85);
+        transition:
+          opacity var(--duration-normal) var(--ease-spring),
+          transform var(--duration-normal) var(--ease-spring);
+      }
+
+      .slide.visible .reveal-scale {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      /* Glow pulse animation */
+      @keyframes glow-pulse {
+        0%,
+        100% {
+          opacity: 0.5;
+          transform: scale(1);
         }
-
-        .slide.visible .reveal {
-            opacity: 1;
-            transform: translateY(0);
+        50% {
+          opacity: 0.8;
+          transform: scale(1.1);
         }
+      }
 
-        /* Stagger children */
-        .reveal:nth-child(1) { transition-delay: 0.1s; }
-        .reveal:nth-child(2) { transition-delay: 0.2s; }
-        .reveal:nth-child(3) { transition-delay: 0.3s; }
-        .reveal:nth-child(4) { transition-delay: 0.4s; }
-        .reveal:nth-child(5) { transition-delay: 0.5s; }
-        .reveal:nth-child(6) { transition-delay: 0.6s; }
+      .glow-animate {
+        animation: glow-pulse 4s ease-in-out infinite;
+      }
 
-        /* Scale reveal for stats */
-        .reveal-scale {
-            opacity: 0;
-            transform: scale(0.85);
-            transition: opacity var(--duration-normal) var(--ease-spring),
-                        transform var(--duration-normal) var(--ease-spring);
+      /* Floating animation */
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0);
         }
-
-        .slide.visible .reveal-scale {
-            opacity: 1;
-            transform: scale(1);
+        50% {
+          transform: translateY(-20px);
         }
+      }
 
-        /* Glow pulse animation */
-        @keyframes glow-pulse {
-            0%, 100% { opacity: 0.5; transform: scale(1); }
-            50% { opacity: 0.8; transform: scale(1.1); }
+      .float-animate {
+        animation: float 6s ease-in-out infinite;
+      }
+
+      /* Stream animation for how-it-works */
+      @keyframes stream {
+        0% {
+          width: 0%;
         }
-
-        .glow-animate {
-            animation: glow-pulse 4s ease-in-out infinite;
+        100% {
+          width: 100%;
         }
+      }
 
-        /* Floating animation */
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
-        }
+      .stream-bar {
+        height: 4px;
+        background: linear-gradient(90deg, var(--accent), var(--buy));
+        border-radius: 2px;
+        animation: stream 3s ease-out infinite;
+      }
 
-        .float-animate {
-            animation: float 6s ease-in-out infinite;
-        }
-
-        /* Stream animation for how-it-works */
-        @keyframes stream {
-            0% { width: 0%; }
-            100% { width: 100%; }
-        }
-
-        .stream-bar {
-            height: 4px;
-            background: linear-gradient(90deg, var(--accent), var(--buy));
-            border-radius: 2px;
-            animation: stream 3s ease-out infinite;
-        }
-
-        /* ===========================================
+      /* ===========================================
            NAVIGATION DOTS
            =========================================== */
-        .nav-dots {
-            position: fixed;
-            right: clamp(1rem, 2vw, 2rem);
-            top: 50%;
-            transform: translateY(-50%);
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            z-index: 1000;
-        }
+      .nav-dots {
+        position: fixed;
+        right: clamp(1rem, 2vw, 2rem);
+        top: 50%;
+        transform: translateY(-50%);
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        z-index: 1000;
+      }
 
-        .nav-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: var(--border);
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
+      .nav-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: var(--border);
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
 
-        .nav-dot.active {
-            background: var(--accent);
-            box-shadow: 0 0 12px var(--accent-glow);
-            transform: scale(1.3);
-        }
+      .nav-dot.active {
+        background: var(--accent);
+        box-shadow: 0 0 12px var(--accent-glow);
+        transform: scale(1.3);
+      }
 
-        .nav-dot:hover {
-            background: var(--text-muted);
-        }
+      .nav-dot:hover {
+        background: var(--text-muted);
+      }
 
-        /* ===========================================
+      /* ===========================================
            PROGRESS BAR
            =========================================== */
-        .progress-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--accent), var(--buy));
-            z-index: 1001;
-            width: 0%;
-            transition: width 0.2s ease;
-        }
+      .progress-bar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--accent), var(--buy));
+        z-index: 1001;
+        width: 0%;
+        transition: width 0.2s ease;
+      }
 
-        /* ===========================================
+      /* ===========================================
            RESPONSIVE BREAKPOINTS
            =========================================== */
-        @media (max-height: 700px) {
-            :root {
-                --slide-padding: clamp(1rem, 3vw, 2.5rem);
-                --content-gap: clamp(0.75rem, 1.5vw, 1.5rem);
-                --title-size: clamp(1.5rem, 5vw, 3rem);
-                --h2-size: clamp(1.25rem, 3vw, 2rem);
-            }
+      @media (max-height: 700px) {
+        :root {
+          --slide-padding: clamp(1rem, 3vw, 2.5rem);
+          --content-gap: clamp(0.75rem, 1.5vw, 1.5rem);
+          --title-size: clamp(1.5rem, 5vw, 3rem);
+          --h2-size: clamp(1.25rem, 3vw, 2rem);
         }
+      }
 
-        @media (max-height: 600px) {
-            :root {
-                --slide-padding: clamp(0.75rem, 2.5vw, 1.5rem);
-                --title-size: clamp(1.25rem, 4vw, 2.5rem);
-                --body-size: clamp(0.7rem, 1.2vw, 1rem);
-            }
-            .nav-dots { display: none; }
+      @media (max-height: 600px) {
+        :root {
+          --slide-padding: clamp(0.75rem, 2.5vw, 1.5rem);
+          --title-size: clamp(1.25rem, 4vw, 2.5rem);
+          --body-size: clamp(0.7rem, 1.2vw, 1rem);
         }
-
-        @media (max-height: 500px) {
-            :root {
-                --slide-padding: clamp(0.5rem, 2vw, 1rem);
-                --title-size: clamp(1.1rem, 3.5vw, 2rem);
-                --h2-size: clamp(1rem, 2.5vw, 1.5rem);
-            }
+        .nav-dots {
+          display: none;
         }
+      }
 
-        @media (max-width: 600px) {
-            .timeline {
-                flex-direction: column;
-            }
-            .two-col, .three-col {
-                grid-template-columns: 1fr;
-            }
-            .nav-dots {
-                display: none;
-            }
+      @media (max-height: 500px) {
+        :root {
+          --slide-padding: clamp(0.5rem, 2vw, 1rem);
+          --title-size: clamp(1.1rem, 3.5vw, 2rem);
+          --h2-size: clamp(1rem, 2.5vw, 1.5rem);
         }
+      }
 
-        /* ===========================================
+      @media (max-width: 600px) {
+        .timeline {
+          flex-direction: column;
+        }
+        .arch-flow {
+          flex-direction: column;
+          gap: clamp(0.5rem, 1vh, 0.75rem);
+        }
+        .arch-connector {
+          display: none;
+        }
+        .two-col,
+        .three-col {
+          grid-template-columns: 1fr;
+        }
+        .nav-dots {
+          display: none;
+        }
+      }
+
+      /* ===========================================
+           PRINT — one slide per PDF page
+           =========================================== */
+      @media print {
+        @page {
+          size: 1280px 720px;
+          margin: 0;
+        }
+        html,
+        body {
+          overflow: visible !important;
+          height: auto !important;
+          scroll-snap-type: none !important;
+        }
+        .progress-bar,
+        .nav-dots {
+          display: none !important;
+        }
+        /* Force all reveal/animated content visible when printing */
+        .reveal,
+        .reveal-scale {
+          opacity: 1 !important;
+          transform: none !important;
+        }
+        .slide {
+          width: 1280px;
+          height: 720px;
+          min-height: 720px;
+          max-height: 720px;
+          overflow: hidden;
+          page-break-after: always;
+          break-after: page;
+          page-break-inside: avoid;
+        }
+        .slide:last-child {
+          page-break-after: auto;
+          break-after: auto;
+        }
+        body {
+          -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
+        }
+      }
+
+      /* ===========================================
            REDUCED MOTION
            =========================================== */
-        @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after {
-                animation-duration: 0.01ms !important;
-                transition-duration: 0.2s !important;
-            }
-            html {
-                scroll-behavior: auto;
-            }
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          animation-duration: 0.01ms !important;
+          transition-duration: 0.2s !important;
         }
+        html {
+          scroll-behavior: auto;
+        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <!-- Progress Bar -->
     <div class="progress-bar" id="progressBar"></div>
 
@@ -716,453 +1080,639 @@
          SLIDE 1: HOOK
          =========================================== -->
     <section class="slide bg-gradient-mesh bg-grid" id="slide-hook">
-        <div class="glow-orb blue glow-animate" style="top: 10%; left: 10%;"></div>
-        <div class="glow-orb green glow-animate" style="bottom: 20%; right: 15%; animation-delay: 1s;"></div>
-        <div class="glow-orb red glow-animate" style="top: 60%; left: 60%; animation-delay: 2s;"></div>
+      <div class="glow-orb blue glow-animate" style="top: 10%; left: 10%"></div>
+      <div
+        class="glow-orb green glow-animate"
+        style="bottom: 20%; right: 15%; animation-delay: 1s"
+      ></div>
+      <div
+        class="glow-orb red glow-animate"
+        style="top: 60%; left: 60%; animation-delay: 2s"
+      ></div>
+      <img
+        src="assets/logo.png"
+        alt="Mato logo"
+        class="hero-logo-bg decorative"
+      />
 
-        <div class="slide-content">
-            <div class="mato-logo reveal">
-                <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M20 4L36 32H4L20 4Z" stroke="currentColor" stroke-width="4" stroke-linejoin="round" fill="none"/>
-                </svg>
-                <span>Mato</span>
-            </div>
-
-            <h1 class="reveal" style="margin-top: var(--content-gap); max-width: 900px;">
-                Solana's vision is <span class="text-accent">Internet Capital Markets</span>
-            </h1>
-
-            <p class="subtitle reveal" style="margin-top: var(--element-gap);">
-                Stocks, bonds, forex — all trading on-chain, 24/7, globally accessible.
-            </p>
-
-            <p class="subtitle reveal" style="margin-top: var(--content-gap);">
-                But institutions won't trade on infrastructure where <span class="text-sell">bots steal from every order</span>.
-            </p>
-
-            <h2 class="reveal" style="margin-top: var(--content-gap); margin-bottom: 0;">
-                Mato fixes that.
-            </h2>
+      <div class="slide-content">
+        <div class="mato-logo reveal">
+          <img src="assets/logo.png" alt="Mato logo" />
+          <span>Mato</span>
         </div>
+
+        <h1
+          class="reveal"
+          style="margin-top: var(--content-gap); max-width: 900px"
+        >
+          Solana's vision is
+          <span class="text-accent">Internet Capital Markets</span>
+        </h1>
+
+        <p class="subtitle reveal" style="margin-top: var(--element-gap)">
+          Stocks, bonds, forex: all trading on-chain, 24/7, globally accessible
+        </p>
+
+        <p class="subtitle reveal" style="margin-top: var(--content-gap)">
+          But institutions won't trade on infrastructure where
+          <span class="text-sell">bots steal from every order</span>
+        </p>
+
+        <h2
+          class="reveal"
+          style="margin-top: var(--content-gap); margin-bottom: 0"
+        >
+          Mato fixes that.
+        </h2>
+      </div>
     </section>
 
     <!-- ===========================================
          SLIDE 2: PROBLEM
          =========================================== -->
     <section class="slide bg-grid" id="slide-problem">
-        <div class="glow-orb red glow-animate" style="top: 20%; right: 10%;"></div>
+      <div
+        class="glow-orb red blue glow-animate"
+        style="top: 20%; right: 10%"
+      ></div>
+      <img
+        src="assets/logo.png"
+        alt="Mato logo"
+        class="problem-logo-bg decorative"
+      />
 
-        <div class="slide-content">
-            <p class="overline reveal">The Problem</p>
-            <h2 class="reveal">Current DEX infrastructure<br>can't support real capital markets</h2>
+      <div class="slide-content">
+        <p class="overline reveal">The Problem</p>
+        <h2 class="reveal">
+          Current DEX infrastructure<br />can't support real capital markets
+        </h2>
 
-            <ul class="bullet-list reveal" style="max-width: 700px;">
-                <li>Sandwich attacks extract <strong class="text-sell">80,000+ SOL</strong> from traders</li>
-                <li>Large orders move markets against you — slippage compounds</li>
-                <li>No institutional player will accept this execution quality</li>
-            </ul>
+        <ul class="bullet-list reveal" style="max-width: 700px">
+          <li>
+            Sandwich attacks extract
+            <strong class="text-sell">80,000+ SOL</strong> per month
+          </li>
+          <li>Large orders move markets against you; slippage compounds</li>
+          <li>No institutional player will accept this execution quality</li>
+        </ul>
 
-            <p class="reveal" style="margin-top: var(--content-gap); font-size: var(--h3-size); color: var(--text-primary); font-weight: 500;">
-                This isn't how capital markets work.<br>
-                <span class="text-accent">And it's why ICM hasn't happened yet.</span>
-            </p>
-        </div>
+        <p
+          class="reveal"
+          style="
+            margin-top: var(--content-gap);
+            font-size: var(--h3-size);
+            color: var(--text-primary);
+            font-weight: 500;
+          "
+        >
+          This isn't how capital markets work.<br />
+          <span class="text-accent">And it's why ICM hasn't happened yet.</span>
+        </p>
+      </div>
     </section>
 
     <!-- ===========================================
          SLIDE 3: VALUE PROPOSITION
          =========================================== -->
     <section class="slide bg-gradient-mesh" id="slide-value-prop">
-        <div class="glow-orb blue glow-animate" style="top: 30%; left: 30%;"></div>
+      <div class="glow-orb blue glow-animate" style="top: 30%; left: 30%"></div>
 
-        <div class="slide-content" style="align-items: center; text-align: center;">
-            <p class="overline reveal">The Solution</p>
+      <div class="slide-content">
+        <p class="overline reveal">The Solution</p>
 
-            <h1 class="reveal" style="max-width: 900px;">
-                Mato brings <span class="text-accent">institutional-grade execution</span> to Solana
-            </h1>
+        <h1 class="reveal" style="max-width: 900px">
+          Mato brings
+          <span class="text-accent">institutional-grade execution</span> to
+          Solana
+        </h1>
 
-            <p class="subtitle reveal" style="margin-top: var(--content-gap); text-align: center;">
-                The trading layer Internet Capital Markets need.
-            </p>
+        <p class="subtitle reveal" style="margin-top: var(--content-gap)">
+          The trading layer Internet Capital Markets need
+        </p>
 
-            <div class="stream-bar reveal" style="margin-top: var(--content-gap); max-width: 400px; width: 100%;"></div>
-        </div>
+        <div
+          class="stream-bar reveal"
+          style="margin-top: var(--content-gap); max-width: 400px; width: 100%"
+        ></div>
+      </div>
     </section>
 
     <!-- ===========================================
-         SLIDE 4: HOW IT WORKS
+         SLIDE 4: ARCHITECTURE
          =========================================== -->
-    <section class="slide bg-grid" id="slide-how">
-        <div class="slide-content">
-            <p class="overline reveal">How It Works</p>
-            <h2 class="reveal">Continuous clearing auctions with time-streamed orders</h2>
+    <section class="slide bg-gradient-mesh" id="slide-architecture">
+      <div
+        class="glow-orb blue glow-animate"
+        style="bottom: 20%; left: 10%"
+      ></div>
 
-            <div class="steps reveal" style="max-width: 600px;">
-                <div class="step">
-                    <div class="step-number">1</div>
-                    <div class="step-content">
-                        <h3>Set your swap & duration</h3>
-                        <p>Choose anywhere from 10 seconds to 1 year</p>
-                    </div>
-                </div>
+      <div class="slide-content">
+        <p class="overline reveal">Architecture</p>
+        <h2 class="reveal">Fully on-chain market, no oracles needed</h2>
 
-                <div class="step">
-                    <div class="step-number">2</div>
-                    <div class="step-content">
-                        <h3>Mato splits into micro-auctions</h3>
-                        <p>Your order streams across thousands of auction slots</p>
-                    </div>
-                </div>
-
-                <div class="step">
-                    <div class="step-number">3</div>
-                    <div class="step-content">
-                        <h3>Each auction clears at fair price</h3>
-                        <p>No front-running. No sandwich attacks. No slippage spiral.</p>
-                    </div>
-                </div>
-            </div>
-
-            <p class="reveal" style="margin-top: var(--content-gap); color: var(--text-primary); font-weight: 500;">
-                <span class="text-accent">One transaction.</span> Thousands of protected trades. Set and forget.
-            </p>
+        <div class="formula-bar reveal">
+          Order = <span style="color: var(--text-primary)">Quantity</span> +
+          <span style="color: var(--text-muted)">Limit</span>
+          + <span style="color: var(--accent)">Duration</span>
         </div>
+
+        <div class="arch-flow reveal" style="margin-top: var(--element-gap)">
+          <div class="arch-node">
+            <h3 class="text-sell">Sell</h3>
+            <p>Set your swap & duration</p>
+          </div>
+
+          <div class="arch-connector to-right"></div>
+
+          <div class="arch-node arch-center">
+            <div class="arch-center-label">The Market</div>
+            <div class="arch-vaults">
+              <div class="vault-badge sol">SOL Vault</div>
+              <div class="vault-badge usdc">USDC Vault</div>
+            </div>
+            <p>Micro-auctions stream across slots</p>
+            <div class="stream-bar" style="max-width: 100%"></div>
+            <p style="color: var(--accent); font-weight: 500">
+              Each auction clears at fair price
+            </p>
+          </div>
+
+          <div class="arch-connector to-left"></div>
+
+          <div class="arch-node">
+            <h3 class="text-buy">Buy</h3>
+            <p>Set your swap & duration</p>
+          </div>
+        </div>
+
+        <div class="arch-props reveal" style="margin-top: var(--content-gap)">
+          <span class="prop-pill">Fully on-chain</span>
+          <span class="prop-pill">No oracles</span>
+          <span class="prop-pill">Exit anytime</span>
+          <span class="prop-pill">Makers update anytime</span>
+        </div>
+      </div>
     </section>
 
     <!-- ===========================================
          SLIDE 5: WHY IT MATTERS
          =========================================== -->
     <section class="slide bg-gradient-mesh" id="slide-why">
-        <div class="glow-orb green glow-animate" style="bottom: 20%; left: 20%;"></div>
+      <div
+        class="glow-orb green glow-animate"
+        style="bottom: 20%; left: 20%"
+      ></div>
 
-        <div class="slide-content">
-            <p class="overline reveal">Why It Matters</p>
-            <h2 class="reveal">Three problems, one solution</h2>
+      <div class="slide-content">
+        <p class="overline reveal">Why It Matters</p>
+        <h2 class="reveal">Three problems, one solution</h2>
 
-            <div class="three-col reveal" style="margin-top: var(--element-gap);">
-                <div class="card stat-card">
-                    <div class="stat-number text-buy">MEV</div>
-                    <p class="stat-label">Protection</p>
-                    <p style="margin-top: 0.75rem; font-size: var(--small-size);">Auctions prevent sandwich attacks and toxic flow</p>
-                </div>
+        <div
+          class="three-col reveal"
+          style="margin-top: var(--element-gap); max-width: 750px"
+        >
+          <div class="card stat-card">
+            <div class="stat-number text-buy">MEV</div>
+            <p class="stat-label">Protection</p>
+            <p style="margin-top: 0.75rem; font-size: var(--small-size)">
+              Auctions prevent sandwich attacks and toxic flow
+            </p>
+          </div>
 
-                <div class="card stat-card">
-                    <div class="stat-number text-accent">0%</div>
-                    <p class="stat-label">Price Impact</p>
-                    <p style="margin-top: 0.75rem; font-size: var(--small-size);">Streaming reduces slippage to near-zero</p>
-                </div>
+          <div class="card stat-card">
+            <div class="stat-number text-accent">0%</div>
+            <p class="stat-label">Price Impact</p>
+            <p style="margin-top: 0.75rem; font-size: var(--small-size)">
+              Streaming reduces slippage to near-zero
+            </p>
+          </div>
 
-                <div class="card stat-card">
-                    <div class="stat-number">2</div>
-                    <p class="stat-label">Transaction</p>
-                    <p style="margin-top: 0.75rem; font-size: var(--small-size);">Set it and forget it — no active management</p>
-                </div>
-            </div>
+          <div class="card stat-card">
+            <div class="stat-number">2</div>
+            <p class="stat-label">Transactions</p>
+            <p style="margin-top: 0.75rem; font-size: var(--small-size)">
+              Just open and close your position
+            </p>
+          </div>
         </div>
+      </div>
     </section>
 
     <!-- ===========================================
-         SLIDE 6: MARKET
+         SLIDE 6: PHILOSOPHY
+         =========================================== -->
+    <section class="slide bg-grid" id="slide-time">
+      <div class="slide-content">
+        <p class="overline reveal">Philosophy</p>
+        <h2 class="reveal">
+          Time in the market &nbsp;&gt;&nbsp; Timing the market
+        </h2>
+
+        <img
+          src="assets/mert-tweet.png"
+          alt="Tweet about staying invested instead of timing tops and bottoms"
+          class="tweet-image reveal-scale"
+        />
+      </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 7: MATO vs DCA
+         =========================================== -->
+    <section class="slide bg-grid" id="slide-compare">
+      <div
+        class="glow-orb blue glow-animate"
+        style="top: 15%; right: 15%"
+      ></div>
+
+      <div class="slide-content">
+        <p class="overline reveal">Why Mato Wins</p>
+        <h2 class="reveal">Not your average DCA</h2>
+
+        <table class="compare-table reveal">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Jupiter DCA</th>
+              <th class="col-mato">Mato</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Granularity</td>
+              <td class="compare-lose">Minutes / Hours</td>
+              <td class="col-mato compare-win">Every slot (~400ms)</td>
+            </tr>
+            <tr>
+              <td>Transactions</td>
+              <td class="compare-lose">1 per interval (off-chain triggered)</td>
+              <td class="col-mato compare-win">2 total (open + close)</td>
+            </tr>
+            <tr>
+              <td>Execution</td>
+              <td class="compare-lose">Off-chain keeper bots</td>
+              <td class="col-mato compare-win">100% on-chain smart contract</td>
+            </tr>
+            <tr>
+              <td>Fee</td>
+              <td class="compare-lose">0.1%</td>
+              <td class="col-mato compare-win">0.01%</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p
+          class="reveal"
+          style="margin-top: var(--content-gap); font-weight: 500"
+        >
+          <span class="text-accent"
+            >10x cheaper. Infinitely more granular. Zero off-chain trust.</span
+          >
+        </p>
+      </div>
+    </section>
+
+    <!-- ===========================================
+         SLIDE 8: MARKET
          =========================================== -->
     <section class="slide bg-grid" id="slide-market">
-        <div class="glow-orb blue glow-animate" style="top: 10%; right: 20%;"></div>
+      <div
+        class="glow-orb blue glow-animate"
+        style="top: 10%; right: 20%"
+      ></div>
 
-        <div class="slide-content">
-            <p class="overline reveal">Market Opportunity</p>
-            <h2 class="reveal">The future of on-chain capital markets</h2>
+      <div class="slide-content">
+        <p class="overline reveal">Market Opportunity</p>
+        <h2 class="reveal">The future of on-chain capital markets</h2>
 
-            <div class="two-col reveal" style="max-width: 800px;">
-                <div class="card">
-                    <h3 style="color: var(--accent); margin-bottom: 0.75rem;">Today</h3>
-                    <p>DeFi traders making swaps over $1,000 who feel the pain of slippage and MEV</p>
-                </div>
-
-                <div class="card card-glow">
-                    <h3 style="color: var(--buy); margin-bottom: 0.75rem;">Tomorrow</h3>
-                    <p>Tokenized equities, on-chain bonds, RWAs — every asset needs fair, MEV-resistant trading</p>
-                </div>
-            </div>
-
-            <p class="reveal" style="margin-top: var(--content-gap); font-size: var(--h3-size); font-weight: 500;">
-                Every asset coming to Solana will need to trade somewhere.<br>
-                <span class="text-accent">Mato is built for that scale.</span>
+        <div class="two-col reveal" style="max-width: 800px">
+          <div class="card">
+            <h3 style="color: var(--accent); margin-bottom: 0.75rem">Today</h3>
+            <p>
+              DeFi traders making swaps over $1,000 who feel the pain of
+              slippage and MEV
             </p>
+          </div>
+
+          <div class="card card-glow">
+            <h3 style="color: var(--buy); margin-bottom: 0.75rem">Tomorrow</h3>
+            <p>
+              Tokenized equities, on-chain bonds, RWAs: every asset needs fair,
+              MEV-resistant trading
+            </p>
+          </div>
         </div>
+
+        <p
+          class="reveal"
+          style="
+            margin-top: var(--content-gap);
+            font-size: var(--h3-size);
+            font-weight: 500;
+          "
+        >
+          Every asset coming to Solana will need to trade somewhere.<br />
+          <span class="text-accent">Mato is built for that scale.</span>
+        </p>
+      </div>
     </section>
 
     <!-- ===========================================
-         SLIDE 7: BUSINESS MODEL
+        SLIDE 9: BUSINESS MODEL
          =========================================== -->
     <section class="slide" id="slide-business">
-        <div class="slide-content" style="align-items: center; text-align: center;">
-            <p class="overline reveal">Business Model</p>
-            <h2 class="reveal" style="margin-bottom: var(--element-gap);">Trading fees on each auction settlement</h2>
+      <div class="slide-content">
+        <p class="overline reveal">Business Model</p>
+        <h2 class="reveal" style="margin-bottom: var(--element-gap)">
+          Trading fees on each auction settlement
+        </h2>
 
-            <p class="subtitle reveal">
-                Simple and scalable. As volume grows with ICM adoption, so does revenue.
-            </p>
+        <p class="subtitle reveal">
+          Simple and scalable. As volume grows with ICM adoption, so does
+          revenue.
+        </p>
 
-            <div class="card reveal-scale" style="margin-top: var(--content-gap); max-width: 400px;">
-                <p style="font-size: var(--body-size); color: var(--text-muted);">
-                    Fee per settlement <span class="text-accent" style="font-weight: 600;">×</span> Auctions per stream <span class="text-accent" style="font-weight: 600;">×</span> Daily streams
-                </p>
-            </div>
+        <div class="arch-props reveal" style="margin-top: var(--content-gap)">
+          <span class="prop-pill">0.01% fee per settlement</span>
         </div>
+      </div>
     </section>
 
     <!-- ===========================================
-         SLIDE 8: TRACTION
+         SLIDE 10: WHAT WE BUILT
          =========================================== -->
-    <section class="slide bg-gradient-mesh bg-grid" id="slide-traction">
-        <div class="slide-content">
-            <p class="overline reveal">Traction</p>
-            <h2 class="reveal">Building the right thing at the right time</h2>
+    <section class="slide bg-gradient-mesh bg-grid" id="slide-built">
+      <div class="slide-content">
+        <p class="overline reveal">What We Built</p>
+        <h2 class="reveal">Shipped during the hackathon</h2>
 
-            <div class="two-col reveal" style="max-width: 700px;">
-                <div class="card">
-                    <h3 style="margin-bottom: 0.5rem;">Live on Devnet</h3>
-                    <p>Functional protocol ready for testing</p>
-                </div>
+        <div class="three-col reveal" style="max-width: 750px">
+          <div class="card card-glow">
+            <h3 style="color: var(--buy); margin-bottom: 0.5rem">
+              Devnet Launch
+            </h3>
+            <p>Functional protocol deployed and testable on Solana</p>
+          </div>
 
-                <div class="card">
-                    <h3 style="margin-bottom: 0.5rem;">Mainnet Q2 2026</h3>
-                    <p>Production launch on the horizon</p>
-                </div>
-            </div>
+          <div class="card">
+            <h3 style="color: var(--accent); margin-bottom: 0.5rem">
+              Mobile App
+            </h3>
+            <p>Built from scratch, the native mobile trading experience</p>
+          </div>
 
-            <p class="reveal" style="margin-top: var(--content-gap); color: var(--text-secondary);">
-                Solana is pushing hard on ICM. The infrastructure gap is real.<br>
-                <span class="text-accent">We're here to fill it.</span>
-            </p>
+          <div class="card">
+            <h3 style="color: var(--text-primary); margin-bottom: 0.5rem">
+              Market Making
+            </h3>
+            <p>On-chain infrastructure for protocol liquidity</p>
+          </div>
         </div>
+
+        <p
+          class="reveal"
+          style="
+            margin-top: var(--content-gap);
+            font-size: var(--h3-size);
+            font-weight: 500;
+          "
+        >
+          From zero to a working product<br />
+          <span class="text-accent">protocol, mobile app, and liquidity</span>
+        </p>
+      </div>
     </section>
 
     <!-- ===========================================
-         SLIDE 9: ROADMAP
+         SLIDE 11: ROADMAP
          =========================================== -->
     <section class="slide" id="slide-roadmap">
-        <div class="slide-content">
-            <p class="overline reveal">Roadmap</p>
-            <h2 class="reveal">Clear path to market</h2>
+      <div class="slide-content">
+        <p class="overline reveal">Roadmap</p>
+        <h2 class="reveal">Clear path to market</h2>
 
-            <div class="timeline reveal">
-                <div class="timeline-item current">
-                    <div class="timeline-date">Q1 2026</div>
-                    <h3>Foundation</h3>
-                    <p>Devnet live, Monolith hackathon, community testing</p>
-                </div>
+        <div class="timeline reveal" style="max-width: 800px">
+          <div class="timeline-item current">
+            <div class="timeline-date">Q1 2026</div>
+            <h3>Foundation</h3>
+            <p>Devnet live, Monolith hackathon, community testing</p>
+          </div>
 
-                <div class="timeline-item">
-                    <div class="timeline-date">Q2 2026</div>
-                    <h3>Launch</h3>
-                    <p>Mainnet deployment on Solana</p>
-                </div>
+          <div class="timeline-item">
+            <div class="timeline-date">Q2 2026</div>
+            <h3>Launch</h3>
+            <p>Mainnet deployment on Solana, more pairs</p>
+          </div>
 
-                <div class="timeline-item">
-                    <div class="timeline-date">Q3 2026</div>
-                    <h3>Scale</h3>
-                    <p>Liquidity incentives, integrations, more pairs</p>
-                </div>
-            </div>
+          <div class="timeline-item">
+            <div class="timeline-date">Q3 2026</div>
+            <h3>Scale</h3>
+            <p>Limit orders, Liquidity incentives, integrations</p>
+          </div>
         </div>
+      </div>
     </section>
 
     <!-- ===========================================
-         SLIDE 10: TEAM
+         SLIDE 12: TEAM
          =========================================== -->
     <section class="slide bg-grid" id="slide-team">
-        <div class="glow-orb blue glow-animate" style="bottom: 30%; right: 20%;"></div>
+      <div
+        class="glow-orb blue glow-animate"
+        style="bottom: 30%; right: 20%"
+      ></div>
 
-        <div class="slide-content">
-            <p class="overline reveal">Team</p>
-            <h2 class="reveal">Where engineering meets market design</h2>
+      <div class="slide-content">
+        <p class="overline reveal">Team</p>
+        <h2 class="reveal">Where engineering meets market design</h2>
 
-            <div class="team-grid reveal">
-                <div class="team-member">
-                    <div class="team-member-header">
-                        <img src="assets/froots.png" alt="Thomas" class="team-photo">
-                        <div class="team-name">Thomas</div>
-                    </div>
-                    <div class="team-credentials">
-                        <div class="team-credential"><span class="badge">Superteam</span> Germany Member</div>
-                        <div class="team-credential"><span class="badge">StakingFacilities</span> Software Engineer</div>
-                        <div class="team-credential">Physics & Economics background</div>
-                    </div>
-                </div>
-
-                <div class="team-member">
-                    <div class="team-member-header">
-                        <img src="assets/gopi.jpg" alt="Gopi" class="team-photo">
-                        <div class="team-name">Gopi</div>
-                    </div>
-                    <div class="team-credentials">
-                        <div class="team-credential"><span class="badge">TUM Blockchain</span> President</div>
-                        <div class="team-credential"><span class="badge">Solana Beach</span> Lead Engineer</div>
-                        <div class="team-credential">Computer Science background</div>
-                    </div>
-                </div>
+        <div class="team-grid reveal">
+          <div class="team-member">
+            <div class="team-member-header">
+              <img src="assets/froots.png" alt="Thomas" class="team-photo" />
+              <div class="team-name">Thomas</div>
             </div>
-
-            <p class="reveal" style="margin-top: var(--content-gap); font-size: var(--h3-size); font-weight: 500; max-width: 700px;">
-                We're not just building a DEX. We're building the <span class="text-accent">execution layer for Internet Capital Markets</span>.
-            </p>
-        </div>
-    </section>
-
-    <!-- ===========================================
-         SLIDE 11: CTA
-         =========================================== -->
-    <section class="slide bg-gradient-mesh" id="slide-cta">
-        <div class="glow-orb blue glow-animate" style="top: 20%; left: 30%;"></div>
-        <div class="glow-orb green glow-animate" style="bottom: 30%; right: 30%; animation-delay: 1.5s;"></div>
-
-        <div class="slide-content">
-            <div class="cta-container">
-                <div class="mato-logo reveal">
-                    <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M20 4L36 32H4L20 4Z" stroke="currentColor" stroke-width="4" stroke-linejoin="round" fill="none"/>
-                    </svg>
-                    <span>Mato</span>
-                </div>
-
-                <p class="tagline reveal">
-                    Solana is building <strong>Internet Capital Markets</strong>.<br>
-                    Mato is building <strong>how they trade</strong>.
-                </p>
-
-                <div class="qr-placeholder reveal-scale">
-                    [QR Code]<br>Try on Devnet
-                </div>
-
-                <p class="cta-instruction reveal">
-                    Scan to be the first to trade without getting sandwiched.
-                </p>
+            <div class="team-credentials">
+              <div class="team-credential">
+                <span class="badge">Superteam Germany</span> Member
+              </div>
+              <div class="team-credential">
+                <span class="badge">Staking Facilities</span> Software Engineer
+              </div>
+              <div class="team-credential">Physics & Economics background</div>
             </div>
+          </div>
+
+          <div class="team-member">
+            <div class="team-member-header">
+              <img src="assets/gopi.jpg" alt="Gopi" class="team-photo" />
+              <div class="team-name">Gopi</div>
+            </div>
+            <div class="team-credentials">
+              <div class="team-credential">
+                <span class="badge">TUM Blockchain Club</span> President
+              </div>
+              <div class="team-credential">
+                <span class="badge">Solana Beach</span> Lead Engineer
+              </div>
+              <div class="team-credential">Computer Science background</div>
+            </div>
+          </div>
         </div>
+
+        <p
+          class="reveal"
+          style="
+            margin-top: var(--content-gap);
+            font-size: var(--h3-size);
+            font-weight: 500;
+            max-width: 700px;
+          "
+        >
+          We're not just building a DEX. We're building the
+          <span class="text-accent"
+            >execution layer for Internet Capital Markets</span
+          >.
+        </p>
+      </div>
     </section>
 
     <!-- ===========================================
          JAVASCRIPT: Presentation Controller
          =========================================== -->
     <script>
-        class SlidePresentation {
-            constructor() {
-                this.slides = document.querySelectorAll('.slide');
-                this.currentSlide = 0;
-                this.isScrolling = false;
+      class SlidePresentation {
+        constructor() {
+          this.slides = document.querySelectorAll(".slide");
+          this.currentSlide = 0;
+          this.isScrolling = false;
 
-                this.setupIntersectionObserver();
-                this.setupKeyboardNav();
-                this.setupNavDots();
-                this.setupProgressBar();
-                this.setupTouchNav();
-            }
-
-            setupIntersectionObserver() {
-                const options = {
-                    root: null,
-                    rootMargin: '0px',
-                    threshold: 0.5
-                };
-
-                const observer = new IntersectionObserver((entries) => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            entry.target.classList.add('visible');
-                            this.currentSlide = Array.from(this.slides).indexOf(entry.target);
-                            this.updateNavDots();
-                            this.updateProgressBar();
-                        }
-                    });
-                }, options);
-
-                this.slides.forEach(slide => observer.observe(slide));
-            }
-
-            setupKeyboardNav() {
-                document.addEventListener('keydown', (e) => {
-                    if (e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown') {
-                        e.preventDefault();
-                        this.goToSlide(this.currentSlide + 1);
-                    } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
-                        e.preventDefault();
-                        this.goToSlide(this.currentSlide - 1);
-                    } else if (e.key === 'Home') {
-                        e.preventDefault();
-                        this.goToSlide(0);
-                    } else if (e.key === 'End') {
-                        e.preventDefault();
-                        this.goToSlide(this.slides.length - 1);
-                    }
-                });
-            }
-
-            setupTouchNav() {
-                let touchStartY = 0;
-                let touchEndY = 0;
-
-                document.addEventListener('touchstart', (e) => {
-                    touchStartY = e.changedTouches[0].screenY;
-                }, { passive: true });
-
-                document.addEventListener('touchend', (e) => {
-                    touchEndY = e.changedTouches[0].screenY;
-                    const diff = touchStartY - touchEndY;
-
-                    if (Math.abs(diff) > 50) {
-                        if (diff > 0) {
-                            this.goToSlide(this.currentSlide + 1);
-                        } else {
-                            this.goToSlide(this.currentSlide - 1);
-                        }
-                    }
-                }, { passive: true });
-            }
-
-            setupNavDots() {
-                const nav = document.getElementById('navDots');
-                this.slides.forEach((_, index) => {
-                    const dot = document.createElement('div');
-                    dot.className = 'nav-dot' + (index === 0 ? ' active' : '');
-                    dot.addEventListener('click', () => this.goToSlide(index));
-                    nav.appendChild(dot);
-                });
-            }
-
-            updateNavDots() {
-                const dots = document.querySelectorAll('.nav-dot');
-                dots.forEach((dot, index) => {
-                    dot.classList.toggle('active', index === this.currentSlide);
-                });
-            }
-
-            setupProgressBar() {
-                this.progressBar = document.getElementById('progressBar');
-                this.updateProgressBar();
-            }
-
-            updateProgressBar() {
-                const progress = ((this.currentSlide + 1) / this.slides.length) * 100;
-                this.progressBar.style.width = progress + '%';
-            }
-
-            goToSlide(index) {
-                if (index < 0 || index >= this.slides.length || this.isScrolling) return;
-
-                this.isScrolling = true;
-                this.slides[index].scrollIntoView({ behavior: 'smooth' });
-
-                setTimeout(() => {
-                    this.isScrolling = false;
-                }, 800);
-            }
+          this.setupIntersectionObserver();
+          this.setupKeyboardNav();
+          this.setupNavDots();
+          this.setupProgressBar();
+          this.setupTouchNav();
         }
 
-        // Initialize presentation
-        document.addEventListener('DOMContentLoaded', () => {
-            new SlidePresentation();
-        });
+        setupIntersectionObserver() {
+          const options = {
+            root: null,
+            rootMargin: "0px",
+            threshold: 0.5,
+          };
+
+          const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("visible");
+                this.currentSlide = Array.from(this.slides).indexOf(
+                  entry.target,
+                );
+                this.updateNavDots();
+                this.updateProgressBar();
+              }
+            });
+          }, options);
+
+          this.slides.forEach((slide) => observer.observe(slide));
+        }
+
+        setupKeyboardNav() {
+          document.addEventListener("keydown", (e) => {
+            if (
+              e.key === "ArrowDown" ||
+              e.key === " " ||
+              e.key === "PageDown"
+            ) {
+              e.preventDefault();
+              this.goToSlide(this.currentSlide + 1);
+            } else if (e.key === "ArrowUp" || e.key === "PageUp") {
+              e.preventDefault();
+              this.goToSlide(this.currentSlide - 1);
+            } else if (e.key === "Home") {
+              e.preventDefault();
+              this.goToSlide(0);
+            } else if (e.key === "End") {
+              e.preventDefault();
+              this.goToSlide(this.slides.length - 1);
+            }
+          });
+        }
+
+        setupTouchNav() {
+          let touchStartY = 0;
+          let touchEndY = 0;
+
+          document.addEventListener(
+            "touchstart",
+            (e) => {
+              touchStartY = e.changedTouches[0].screenY;
+            },
+            { passive: true },
+          );
+
+          document.addEventListener(
+            "touchend",
+            (e) => {
+              touchEndY = e.changedTouches[0].screenY;
+              const diff = touchStartY - touchEndY;
+
+              if (Math.abs(diff) > 50) {
+                if (diff > 0) {
+                  this.goToSlide(this.currentSlide + 1);
+                } else {
+                  this.goToSlide(this.currentSlide - 1);
+                }
+              }
+            },
+            { passive: true },
+          );
+        }
+
+        setupNavDots() {
+          const nav = document.getElementById("navDots");
+          this.slides.forEach((_, index) => {
+            const dot = document.createElement("div");
+            dot.className = "nav-dot" + (index === 0 ? " active" : "");
+            dot.addEventListener("click", () => this.goToSlide(index));
+            nav.appendChild(dot);
+          });
+        }
+
+        updateNavDots() {
+          const dots = document.querySelectorAll(".nav-dot");
+          dots.forEach((dot, index) => {
+            dot.classList.toggle("active", index === this.currentSlide);
+          });
+        }
+
+        setupProgressBar() {
+          this.progressBar = document.getElementById("progressBar");
+          this.updateProgressBar();
+        }
+
+        updateProgressBar() {
+          const progress = ((this.currentSlide + 1) / this.slides.length) * 100;
+          this.progressBar.style.width = progress + "%";
+        }
+
+        goToSlide(index) {
+          if (index < 0 || index >= this.slides.length || this.isScrolling)
+            return;
+
+          this.isScrolling = true;
+          this.slides[index].scrollIntoView({ behavior: "smooth" });
+
+          setTimeout(() => {
+            this.isScrolling = false;
+          }, 800);
+        }
+      }
+
+      // Initialize presentation
+      document.addEventListener("DOMContentLoaded", () => {
+        new SlidePresentation();
+      });
     </script>
-</body>
+  </body>
 </html>
