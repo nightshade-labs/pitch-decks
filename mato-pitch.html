@@ -220,34 +220,6 @@
         z-index: 1;
       }
 
-      /* Glowing orb effect */
-      .glow-orb {
-        position: absolute;
-        border-radius: 50%;
-        filter: blur(80px);
-        opacity: 0.6;
-        pointer-events: none;
-        z-index: 0;
-      }
-
-      .glow-orb.blue {
-        background: var(--accent);
-        width: 400px;
-        height: 400px;
-      }
-
-      .glow-orb.green {
-        background: var(--buy);
-        width: 300px;
-        height: 300px;
-      }
-
-      .glow-orb.red {
-        background: var(--sell);
-        width: 250px;
-        height: 250px;
-      }
-
       /* ===========================================
            CARD COMPONENTS
            =========================================== */
@@ -862,23 +834,6 @@
         transform: scale(1);
       }
 
-      /* Glow pulse animation */
-      @keyframes glow-pulse {
-        0%,
-        100% {
-          opacity: 0.5;
-          transform: scale(1);
-        }
-        50% {
-          opacity: 0.8;
-          transform: scale(1.1);
-        }
-      }
-
-      .glow-animate {
-        animation: glow-pulse 4s ease-in-out infinite;
-      }
-
       /* Floating animation */
       @keyframes float {
         0%,
@@ -1033,6 +988,11 @@
           opacity: 1 !important;
           transform: none !important;
         }
+        * {
+          box-shadow: none !important;
+          text-shadow: none !important;
+          backdrop-filter: none !important;
+        }
         .slide {
           width: 1280px;
           height: 720px;
@@ -1080,15 +1040,6 @@
          SLIDE 1: HOOK
          =========================================== -->
     <section class="slide bg-gradient-mesh bg-grid" id="slide-hook">
-      <div class="glow-orb blue glow-animate" style="top: 10%; left: 10%"></div>
-      <div
-        class="glow-orb green glow-animate"
-        style="bottom: 20%; right: 15%; animation-delay: 1s"
-      ></div>
-      <div
-        class="glow-orb red glow-animate"
-        style="top: 60%; left: 60%; animation-delay: 2s"
-      ></div>
       <img
         src="assets/logo.png"
         alt="Mato logo"
@@ -1131,10 +1082,6 @@
          SLIDE 2: PROBLEM
          =========================================== -->
     <section class="slide bg-grid" id="slide-problem">
-      <div
-        class="glow-orb red blue glow-animate"
-        style="top: 20%; right: 10%"
-      ></div>
       <img
         src="assets/logo.png"
         alt="Mato logo"
@@ -1175,8 +1122,6 @@
          SLIDE 3: VALUE PROPOSITION
          =========================================== -->
     <section class="slide bg-gradient-mesh" id="slide-value-prop">
-      <div class="glow-orb blue glow-animate" style="top: 30%; left: 30%"></div>
-
       <div class="slide-content">
         <p class="overline reveal">The Solution</p>
 
@@ -1241,11 +1186,6 @@
          SLIDE 4: ARCHITECTURE
          =========================================== -->
     <section class="slide bg-gradient-mesh" id="slide-architecture">
-      <div
-        class="glow-orb blue glow-animate"
-        style="bottom: 20%; left: 10%"
-      ></div>
-
       <div class="slide-content">
         <p class="overline reveal">Architecture</p>
         <h2 class="reveal">Fully on-chain market, no oracles needed</h2>
@@ -1298,11 +1238,6 @@
          SLIDE 5: WHY IT MATTERS
          =========================================== -->
     <section class="slide bg-gradient-mesh" id="slide-why">
-      <div
-        class="glow-orb green glow-animate"
-        style="bottom: 20%; left: 20%"
-      ></div>
-
       <div class="slide-content">
         <p class="overline reveal">Why It Matters</p>
         <h2 class="reveal">Three problems, one solution</h2>
@@ -1360,11 +1295,6 @@
          SLIDE 7: MATO vs DCA
          =========================================== -->
     <section class="slide bg-grid" id="slide-compare">
-      <div
-        class="glow-orb blue glow-animate"
-        style="top: 15%; right: 15%"
-      ></div>
-
       <div class="slide-content">
         <p class="overline reveal">Why Mato Wins</p>
         <h2 class="reveal">Not your average DCA</h2>
@@ -1416,11 +1346,6 @@
          SLIDE 8: MARKET
          =========================================== -->
     <section class="slide bg-grid" id="slide-market">
-      <div
-        class="glow-orb blue glow-animate"
-        style="top: 10%; right: 20%"
-      ></div>
-
       <div class="slide-content">
         <p class="overline reveal">Market Opportunity</p>
         <h2 class="reveal">The future of on-chain capital markets</h2>
@@ -1557,11 +1482,6 @@
          SLIDE 12: TEAM
          =========================================== -->
     <section class="slide bg-grid" id="slide-team">
-      <div
-        class="glow-orb blue glow-animate"
-        style="bottom: 30%; right: 20%"
-      ></div>
-
       <div class="slide-content">
         <p class="overline reveal">Team</p>
         <h2 class="reveal">Where engineering meets market design</h2>
