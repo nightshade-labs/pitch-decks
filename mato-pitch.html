@@ -390,6 +390,70 @@
             font-size: var(--body-size);
         }
 
+        /* Team member cards */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+            gap: clamp(1rem, 2vw, 1.5rem);
+            max-width: 700px;
+        }
+
+        .team-member {
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: clamp(1rem, 2vw, 1.5rem);
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .team-member-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .team-photo {
+            width: clamp(3rem, 6vw, 4rem);
+            height: clamp(3rem, 6vw, 4rem);
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent);
+        }
+
+        .team-name {
+            font-family: var(--font-display);
+            font-size: clamp(1rem, 1.5vw, 1.25rem);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .team-credentials {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .team-credential {
+            font-size: var(--small-size);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .team-credential .badge {
+            background: var(--accent-soft);
+            color: var(--accent);
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            font-size: clamp(0.6rem, 0.9vw, 0.75rem);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
         /* ===========================================
            CTA SECTION
            =========================================== */
@@ -912,20 +976,30 @@
 
         <div class="slide-content">
             <p class="overline reveal">Team</p>
-            <h2 class="reveal">Infrastructure veterans building market infrastructure</h2>
+            <h2 class="reveal">Where engineering meets market design</h2>
 
-            <div class="team-highlight reveal" style="max-width: 600px;">
-                <div class="credential">
-                    <div class="credential-icon">🏗️</div>
-                    <div class="credential-text">
-                        <strong>StakingFacilities</strong> — building Solana infrastructure since day one
+            <div class="team-grid reveal">
+                <div class="team-member">
+                    <div class="team-member-header">
+                        <img src="assets/froots.png" alt="Thomas" class="team-photo">
+                        <div class="team-name">Thomas</div>
+                    </div>
+                    <div class="team-credentials">
+                        <div class="team-credential"><span class="badge">Superteam</span> Germany Member</div>
+                        <div class="team-credential"><span class="badge">StakingFacilities</span> Software Engineer</div>
+                        <div class="team-credential">Physics & Economics background</div>
                     </div>
                 </div>
 
-                <div class="credential">
-                    <div class="credential-icon">📐</div>
-                    <div class="credential-text">
-                        <strong>Physics & Economics</strong> — we understand market microstructure
+                <div class="team-member">
+                    <div class="team-member-header">
+                        <img src="assets/gopi.jpg" alt="Gopi" class="team-photo">
+                        <div class="team-name">Gopi</div>
+                    </div>
+                    <div class="team-credentials">
+                        <div class="team-credential"><span class="badge">TUM Blockchain</span> President</div>
+                        <div class="team-credential"><span class="badge">Solana Beach</span> Lead Engineer</div>
+                        <div class="team-credential">Computer Science background</div>
                     </div>
                 </div>
             </div>
