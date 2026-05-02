@@ -522,8 +522,8 @@
         right: clamp(3rem, 10vw, 7rem);
         top: 52%;
         transform: translateY(-50%);
-        opacity: 0.2;
-        max-height: min(50vh, 260px);
+        opacity: 0.55;
+        max-height: min(55vh, 300px);
         width: auto;
         pointer-events: none;
       }
@@ -533,8 +533,8 @@
         right: clamp(4rem, 12vw, 8rem);
         top: 52%;
         transform: translateY(-50%);
-        opacity: 0.3;
-        max-height: min(60vh, 320px);
+        opacity: 0.7;
+        max-height: min(65vh, 360px);
         width: auto;
         pointer-events: none;
       }
@@ -1037,33 +1037,17 @@
 
       <div class="slide-content">
         <div class="mato-logo reveal">
-          <img src="assets/logo.png" alt="Mato logo" />
-          <span>Mato</span>
+          <h3>Mato</h3>
         </div>
 
         <h1
           class="reveal"
           style="margin-top: var(--content-gap); max-width: 900px"
         >
-          Solana's vision is
-          <span class="text-accent">Internet Capital Markets</span>
+          <span class="text-accent">Continuous Clearing Auctions</span>
         </h1>
 
-        <p class="subtitle reveal" style="margin-top: var(--element-gap)">
-          Stocks, bonds, forex: all trading on-chain, 24/7, globally accessible
-        </p>
-
-        <p class="subtitle reveal" style="margin-top: var(--content-gap)">
-          But institutions won't trade on infrastructure where
-          <span class="text-sell">bots steal from every order</span>
-        </p>
-
-        <h2
-          class="reveal"
-          style="margin-top: var(--content-gap); margin-bottom: 0"
-        >
-          Mato fixes that.
-        </h2>
+    
       </div>
     </section>
 
@@ -1080,16 +1064,19 @@
       <div class="slide-content">
         <p class="overline reveal">The Problem</p>
         <h2 class="reveal">
-          Current DEX infrastructure<br />can't support real capital markets
+          Current markets<br />have a flaw in their design
         </h2>
 
+        <p class="subtitle reveal" style="margin-bottom: var(--element-gap)">
+          Current designs treat time as continuous but processes trades serially which leads to riskless arbitrage profits.
+        </p>
+
         <ul class="bullet-list reveal" style="max-width: 700px">
+          <li>Should not exist in a well-functioning market</li>
           <li>
-            Sandwich attacks extract
-            <strong class="text-sell">80,000+ SOL</strong> per month
+            Harm Liquidity
           </li>
-          <li>Large orders move markets against you; slippage compounds</li>
-          <li>No institutional player will accept this execution quality</li>
+          <li>Induce a never-ending arms race for speed</li>
         </ul>
 
         <p
@@ -1101,8 +1088,8 @@
             font-weight: 500;
           "
         >
-          This isn't how capital markets work.<br />
-          <span class="text-accent">And it's why ICM hasn't happened yet.</span>
+          That is a violation of the <span class="text-accent">Efficient Market Hypothesis</span><br />
+          built directly into the market design.
         </p>
       </div>
     </section>
@@ -1112,22 +1099,24 @@
          =========================================== -->
     <section class="slide bg-gradient-mesh" id="slide-value-prop">
       <div class="slide-content">
-        <p class="overline reveal">The Solution</p>
+        <p class="overline reveal">The Innovation</p>
+        <h2 class="reveal" style="max-width: 900px">
+          <span class="text-accent">Continuous Clearing Auctions</span>
+        </h2>
 
-        <h1 class="reveal" style="max-width: 900px">
-          Mato brings
-          <span class="text-accent">institutional-grade execution</span> to
-          Solana
-        </h1>
+        <img
+          src="assets/cca_fusion.png"
+          alt="Continuous trading and batch auctions fused into Continuous Clearing Auctions"
+          class="reveal"
+          style="
+            max-height: 55vh;
+            width: auto;
+            margin-top: var(--element-gap);
+            border-radius: 4px;
+            box-shadow: 0 12px 32px rgba(14, 26, 36, 0.10);
+          "
+        />
 
-        <p class="subtitle reveal" style="margin-top: var(--content-gap)">
-          The trading layer Internet Capital Markets need
-        </p>
-
-        <div
-          class="stream-bar reveal"
-          style="margin-top: var(--content-gap); max-width: 400px; width: 100%"
-        ></div>
       </div>
     </section>
 
@@ -1135,91 +1124,23 @@
          SLIDE 4: HOW IT WORKS
          =========================================== -->
     <section class="slide bg-grid" id="slide-how">
-        <div class="slide-content">
-            <p class="overline reveal">How It Works</p>
-            <h2 class="reveal">Continuous clearing auctions with time-streamed orders</h2>
-
-            <div class="steps reveal" style="max-width: 600px;">
-                <div class="step">
-                    <div class="step-number">1</div>
-                    <div class="step-content">
-                        <h3>Set your swap & duration</h3>
-                        <p>Choose anywhere from 10 seconds to 1 year</p>
-                    </div>
-                </div>
-
-                <div class="step">
-                    <div class="step-number">2</div>
-                    <div class="step-content">
-                        <h3>Mato splits into micro-auctions</h3>
-                        <p>Your order streams across thousands of auction slots</p>
-                    </div>
-                </div>
-
-                <div class="step">
-                    <div class="step-number">3</div>
-                    <div class="step-content">
-                        <h3>Each auction clears at fair price</h3>
-                        <p>No front-running. No sandwich attacks. No slippage spiral.</p>
-                    </div>
-                </div>
-            </div>
-
-            <p class="reveal" style="margin-top: var(--content-gap); color: var(--text-primary); font-weight: 500;">
-                <span class="text-accent">One transaction.</span> Thousands of protected trades. Set and forget.
-            </p>
-        </div>
-    </section>
-
-    <!-- ===========================================
-         SLIDE 4: ARCHITECTURE
-         =========================================== -->
-    <section class="slide bg-gradient-mesh" id="slide-architecture">
       <div class="slide-content">
-        <p class="overline reveal">Architecture</p>
-        <h2 class="reveal">Fully on-chain market, no oracles needed</h2>
+        <p class="overline reveal">How It Works</p>
+        <h2 class="reveal" style="max-width: 1000px">
+          One order,  <span class="text-accent"> thousands of micro-auctions</span>
+        </h2>
 
-        <div class="formula-bar reveal">
-          Order = <span style="color: var(--text-primary)">Quantity</span> +
-          <span style="color: var(--text-muted)">Limit</span>
-          + <span style="color: var(--accent)">Duration</span>
-        </div>
-
-        <div class="arch-flow reveal" style="margin-top: var(--element-gap)">
-          <div class="arch-node">
-            <h3 class="text-sell">Sell</h3>
-            <p>Set your swap & duration</p>
-          </div>
-
-          <div class="arch-connector to-right"></div>
-
-          <div class="arch-node arch-center">
-            <div class="arch-center-label">The Market</div>
-            <div class="arch-vaults">
-              <div class="vault-badge sol">SOL Vault</div>
-              <div class="vault-badge usdc">USDC Vault</div>
-            </div>
-            <p>Micro-auctions stream across slots</p>
-            <div class="stream-bar" style="max-width: 100%"></div>
-            <p style="color: var(--accent); font-weight: 500">
-              Each auction clears at fair price
-            </p>
-          </div>
-
-          <div class="arch-connector to-left"></div>
-
-          <div class="arch-node">
-            <h3 class="text-buy">Buy</h3>
-            <p>Set your swap & duration</p>
-          </div>
-        </div>
-
-        <div class="arch-props reveal" style="margin-top: var(--content-gap)">
-          <span class="prop-pill">Fully on-chain</span>
-          <span class="prop-pill">No oracles</span>
-          <span class="prop-pill">Exit anytime</span>
-          <span class="prop-pill">Makers update anytime</span>
-        </div>
+        <img
+          src="assets/splitting_order.png"
+          alt="A 1000 SOL sell order split into many micro-orders streaming across blocks, each clearing at market price via supply/demand"
+          class="reveal"
+          style="
+            max-width: min(100%, 1100px);
+            max-height: 50vh;
+            height: auto;
+            margin-top: var(--element-gap);
+          "
+        />
       </div>
     </section>
 
@@ -1229,7 +1150,7 @@
     <section class="slide bg-gradient-mesh" id="slide-why">
       <div class="slide-content">
         <p class="overline reveal">Why It Matters</p>
-        <h2 class="reveal">Three problems, one solution</h2>
+        <h2 class="reveal">Enable efficient and fair markets</h2>
 
         <div
           class="three-col reveal"
@@ -1247,7 +1168,7 @@
             <div class="stat-number text-accent">0%</div>
             <p class="stat-label">Price Impact</p>
             <p style="margin-top: 0.75rem; font-size: var(--small-size)">
-              Streaming reduces slippage to near-zero
+              Streaming reduces price impact to near-zero
             </p>
           </div>
 
@@ -1310,11 +1231,11 @@
             <tr>
               <td>Execution</td>
               <td class="compare-lose">Off-chain keeper bots</td>
-              <td class="col-mato compare-win">100% on-chain smart contract</td>
+              <td class="col-mato compare-win">100% on-chain</td>
             </tr>
             <tr>
               <td>Fee</td>
-              <td class="compare-lose">0.1%</td>
+              <td class="compare-lose">0.12%</td>
               <td class="col-mato compare-win">0.01%</td>
             </tr>
           </tbody>
@@ -1325,7 +1246,7 @@
           style="margin-top: var(--content-gap); font-weight: 500"
         >
           <span class="text-accent"
-            >10x cheaper. Infinitely more granular. Zero off-chain trust.</span
+            >12x cheaper. Infinitely more granular. Zero off-chain trust.</span
           >
         </p>
       </div>
@@ -1392,81 +1313,7 @@
       </div>
     </section>
 
-    <!-- ===========================================
-         SLIDE 10: WHAT WE BUILT
-         =========================================== -->
-    <section class="slide bg-gradient-mesh bg-grid" id="slide-built">
-      <div class="slide-content">
-        <p class="overline reveal">What We Built</p>
-        <h2 class="reveal">Shipped during the hackathon</h2>
-
-        <div class="three-col reveal" style="max-width: 750px">
-          <div class="card card-glow">
-            <h3 style="color: var(--buy); margin-bottom: 0.5rem">
-              Devnet Launch
-            </h3>
-            <p>Functional protocol deployed and testable on Solana</p>
-          </div>
-
-          <div class="card">
-            <h3 style="color: var(--accent); margin-bottom: 0.5rem">
-              Mobile App
-            </h3>
-            <p>Built from scratch, the native mobile trading experience</p>
-          </div>
-
-          <div class="card">
-            <h3 style="color: var(--text-primary); margin-bottom: 0.5rem">
-              Market Making
-            </h3>
-            <p>On-chain infrastructure for protocol liquidity</p>
-          </div>
-        </div>
-
-        <p
-          class="reveal"
-          style="
-            margin-top: var(--content-gap);
-            font-size: var(--h3-size);
-            font-weight: 500;
-          "
-        >
-          From zero to a working product<br />
-          <span class="text-accent">protocol, mobile app, and liquidity</span>
-        </p>
-      </div>
-    </section>
-
-    <!-- ===========================================
-         SLIDE 11: ROADMAP
-         =========================================== -->
-    <section class="slide" id="slide-roadmap">
-      <div class="slide-content">
-        <p class="overline reveal">Roadmap</p>
-        <h2 class="reveal">Clear path to market</h2>
-
-        <div class="timeline reveal" style="max-width: 800px">
-          <div class="timeline-item current">
-            <div class="timeline-date">Q1 2026</div>
-            <h3>Foundation</h3>
-            <p>Devnet live, Monolith hackathon, community testing</p>
-          </div>
-
-          <div class="timeline-item">
-            <div class="timeline-date">Q2 2026</div>
-            <h3>Launch</h3>
-            <p>Mainnet deployment on Solana, more pairs</p>
-          </div>
-
-          <div class="timeline-item">
-            <div class="timeline-date">Q3 2026</div>
-            <h3>Scale</h3>
-            <p>Limit orders, Liquidity incentives, integrations</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
+   
     <!-- ===========================================
          SLIDE 12: TEAM
          =========================================== -->
@@ -1492,37 +1339,7 @@
             </div>
           </div>
 
-          <div class="team-member">
-            <div class="team-member-header">
-              <img src="assets/gopi.jpg" alt="Gopi" class="team-photo" />
-              <div class="team-name">Gopi</div>
-            </div>
-            <div class="team-credentials">
-              <div class="team-credential">
-                <span class="badge">TUM Blockchain Club</span> President
-              </div>
-              <div class="team-credential">
-                <span class="badge">Solana Beach</span> Lead Engineer
-              </div>
-              <div class="team-credential">Computer Science background</div>
-            </div>
-          </div>
-        </div>
 
-        <p
-          class="reveal"
-          style="
-            margin-top: var(--content-gap);
-            font-size: var(--h3-size);
-            font-weight: 500;
-            max-width: 700px;
-          "
-        >
-          We're not just building a DEX. We're building the
-          <span class="text-accent"
-            >execution layer for Internet Capital Markets</span
-          >.
-        </p>
       </div>
     </section>
 
