@@ -18,27 +18,27 @@
            =========================================== */
       :root {
         /* === MATO COLORS === */
-        --bg-primary: #060b16;
-        --bg-secondary: #0f182d;
-        --bg-surface: #131f39;
-        --bg-panel: #0c1427;
+        --bg-primary: #faf7f2;
+        --bg-secondary: #ffffff;
+        --bg-surface: #f1ece3;
+        --bg-panel: #ffffff;
 
-        --text-primary: #f3f7ff;
-        --text-secondary: #d3dcf2;
-        --text-muted: #a0aecc;
-        --text-subtle: #7b8cb2;
+        --text-primary: #0e1a24;
+        --text-secondary: #33424f;
+        --text-muted: #6b7785;
+        --text-subtle: #9aa3ad;
 
-        --accent: #4e8dff;
-        --accent-glow: rgba(78, 141, 255, 0.4);
-        --accent-soft: #1e335f;
+        --accent: #1f6f8b;
+        --accent-glow: rgba(31, 111, 139, 0.18);
+        --accent-soft: #e3eef2;
 
-        --buy: #2ccb73;
-        --buy-glow: rgba(44, 203, 115, 0.3);
-        --sell: #f25565;
-        --sell-glow: rgba(242, 85, 101, 0.3);
+        --buy: #1f6f8b;
+        --buy-glow: rgba(31, 111, 139, 0.18);
+        --sell: #a6253f;
+        --sell-glow: rgba(166, 37, 63, 0.18);
 
-        --border: #273a5f;
-        --divider: #1b2c4b;
+        --border: #e2dbcd;
+        --divider: #efe9dc;
 
         /* === TYPOGRAPHY === */
         --font-display: "Clash Display", sans-serif;
@@ -191,18 +191,13 @@
         background:
           radial-gradient(
             ellipse at 30% 20%,
-            rgba(78, 141, 255, 0.15) 0%,
-            transparent 50%
+            rgba(31, 111, 139, 0.10) 0%,
+            transparent 55%
           ),
           radial-gradient(
-            ellipse at 70% 80%,
-            rgba(44, 203, 115, 0.08) 0%,
-            transparent 40%
-          ),
-          radial-gradient(
-            ellipse at 90% 10%,
-            rgba(242, 85, 101, 0.06) 0%,
-            transparent 30%
+            ellipse at 85% 85%,
+            rgba(166, 37, 63, 0.07) 0%,
+            transparent 45%
           ),
           var(--bg-primary);
       }
@@ -213,8 +208,8 @@
         position: absolute;
         inset: 0;
         background-image:
-          linear-gradient(rgba(78, 141, 255, 0.03) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(78, 141, 255, 0.03) 1px, transparent 1px);
+          linear-gradient(rgba(14, 26, 36, 0.045) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(14, 26, 36, 0.045) 1px, transparent 1px);
         background-size: 60px 60px;
         pointer-events: none;
         z-index: 1;
@@ -551,7 +546,7 @@
         max-width: min(100%, 720px);
         border-radius: 16px;
         border: 1px solid var(--border);
-        box-shadow: 0 18px 45px rgba(0, 0, 0, 0.65);
+        box-shadow: 0 12px 32px rgba(14, 26, 36, 0.10);
       }
 
       /* ===========================================
@@ -587,7 +582,7 @@
 
       .compare-table thead th.col-mato {
         color: var(--accent);
-        background: rgba(78, 141, 255, 0.08);
+        background: rgba(31, 111, 139, 0.10);
       }
 
       .compare-table tbody td {
@@ -596,7 +591,7 @@
       }
 
       .compare-table tbody td.col-mato {
-        background: rgba(78, 141, 255, 0.05);
+        background: rgba(31, 111, 139, 0.06);
         color: var(--text-primary);
         font-weight: 600;
       }
@@ -699,14 +694,14 @@
       }
 
       .vault-badge.sol {
-        background: rgba(242, 85, 101, 0.12);
-        border: 1px solid rgba(242, 85, 101, 0.25);
+        background: rgba(166, 37, 63, 0.10);
+        border: 1px solid rgba(166, 37, 63, 0.28);
         color: var(--sell);
       }
 
       .vault-badge.usdc {
-        background: rgba(44, 203, 115, 0.12);
-        border: 1px solid rgba(44, 203, 115, 0.25);
+        background: rgba(31, 111, 139, 0.10);
+        border: 1px solid rgba(31, 111, 139, 0.28);
         color: var(--buy);
       }
 
@@ -855,7 +850,7 @@
 
       .stream-bar {
         height: 4px;
-        background: linear-gradient(90deg, var(--accent), var(--buy));
+        background: linear-gradient(90deg, var(--accent), var(--sell));
         border-radius: 2px;
         animation: stream 3s ease-out infinite;
       }
@@ -901,7 +896,7 @@
         top: 0;
         left: 0;
         height: 3px;
-        background: linear-gradient(90deg, var(--accent), var(--buy));
+        background: linear-gradient(90deg, var(--accent), var(--sell));
         z-index: 1001;
         width: 0%;
         transition: width 0.2s ease;
